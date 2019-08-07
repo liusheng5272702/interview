@@ -5,19 +5,37 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    dataList: []
+    dataList: [],
+    num: 0
   },
   mutations: {
-
+    updateData (state, data) {
+      state.dataList = [...state.dataList, ...data]
+      state.num++
+      console.log(state.num)
+    }
   },
   getters: {
-    getAverage: state => 0,
+    getAverage: state => {
+      let avg // 平均值
+      let len = 0 // 个数
+      let sum = 0 // 和
+      if (state.dataList.length === 0) return 0
+      state.dataList.forEach(t => {
+        len += 1
+        sum += t.data
+      })
+      avg = (sum / len).toFixed(2)
+      return avg
+    },
     getData: state => state.dataList
   },
   actions: {
-    getDataCall (context) {
+    getDataCall ({ commit, state }) {
       // TODO
-      mockGenerator()
+      mockGenerator(state.num * 20, (state.num + 1) * 20).then(data => {
+        commit('updateData', data)
+      })
     }
   }
 })
